@@ -20,7 +20,7 @@ jobs:
         run: npm ci
 
       - name: Build
-        run: npm build
+        run: npm run build
 
   deploy:
     runs-on: ubuntu-latest
