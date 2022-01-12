@@ -5,7 +5,7 @@ on:
     branches: [ main ]
 
 jobs:
-  default:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -25,9 +25,9 @@ jobs:
       - name: Setup AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: arn:aws:iam::090154656992:role/s3-full-access
+          role-session-name: ci-cd-test
 
       - name: Deploy
         run: aws s3 sync ./dist/frontend s3://ng-github-actions-s3
