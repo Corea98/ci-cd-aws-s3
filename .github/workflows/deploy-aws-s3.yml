@@ -30,10 +30,10 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-region: ${{ secrets.AWS_REGION }}
-          role-to-assume: arn:aws:iam::090154656992:role/s3-full-access
-          role-session-name: ci-cd-test
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          role-session-name: my-github-role-action
 
       - name: Deploy
-        run: aws s3 sync ./dist/frontend s3://ng-github-actions-s3
+        run: aws s3 sync ./dist/frontend s3://${{ secrets.AWS_S3_NAME }}
 
 
