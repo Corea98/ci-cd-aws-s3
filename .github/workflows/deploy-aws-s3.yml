@@ -34,7 +34,7 @@ jobs:
         if: success()
         run: |
           cd frontend
-          npm run lint
+          npm run lintasd
           # npm run test
 
       - name: Build
