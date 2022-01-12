@@ -18,44 +18,56 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Setup node
-        if: success()
-        uses: actions/setup-node@v1
-        with:
-          node-version: 14
+      # - name: Setup node
+      #   if: success()
+      #   uses: actions/setup-node@v1
+      #   with:
+      #     node-version: 14
 
-      - name: Install dependencies
-        if: success()
+      # - name: Install dependencies
+      #   if: success()
+      #   run: |
+      #     cd frontend
+      #     npm install ci
+
+      # - name: Test
+      #   if: success()
+      #   run: |
+      #     cd frontend
+      #     npm run lint
+      #     # npm run test
+
+      # - name: Build
+      #   if: success()
+      #   run: |
+      #     cd frontend
+      #     npm run build
+
+      # - name: Setup AWS credentials
+      #   if: success()
+      #   uses: aws-actions/configure-aws-credentials@v1
+      #   with:
+      #     aws-region: ${{ secrets.AWS_REGION }}
+      #     role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+      #     role-session-name: my-github-role-action
+
+      # - name: Deploy
+      #   if: success()
+      #   run: aws s3 sync ${{ secrets.FRONTEND_BUILD_PATH }} s3://${{ secrets.AWS_S3_NAME }} --delete
+
+      - name: Prints base name in pull request
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_BRANCH: ${{ github.base_ref }}
         run: |
-          cd frontend
-          npm install ci
+          echo "Pull request's base branch is: ${BASE_BRANCH}"
 
-      - name: Test
-        if: success()
+      - name: Prints base name in push
+        if: github.event_name == 'push'
+        env:
+          BASE_BRANCH: ${{ github.base_ref }}
         run: |
-          cd frontend
-          npm run lint
-          # npm run test
+          echo "Pull request's base branch is: ${BASE_BRANCH}"
 
-      - name: Build
-        if: success()
-        run: |
-          cd frontend
-          npm run build
-
-      - name: Setup AWS credentials
-        if: success()
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-region: ${{ secrets.AWS_REGION }}
-          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
-          role-session-name: my-github-role-action
-
-      - name: Deploy
-        if: success()
-        run: aws s3 sync ${{ secrets.FRONTEND_BUILD_PATH }} s3://${{ secrets.AWS_S3_NAME }} --delete
-
-      - name: Print current branch
-        run: echo ${{ secrets.GITHUB_REF }}
 
 
