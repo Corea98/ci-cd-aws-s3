@@ -34,7 +34,7 @@ jobs:
         if: success()
         run: |
           cd frontend
-          npm run lintasd
+          npm run lint
           # npm run test
 
       - name: Build
@@ -53,6 +53,9 @@ jobs:
 
       - name: Deploy
         if: success()
-        run: aws s3 sync ./frontend/dist s3://${{ secrets.AWS_S3_NAME }} --delete
+        run: aws s3 sync ${{ secrets.FRONTEND_BUILD_PATH }} s3://${{ secrets.AWS_S3_NAME }} --delete
+
+      - name: Print current branch
+        run: echo ${{ secrets.GITHUB_REF }}
 
 
