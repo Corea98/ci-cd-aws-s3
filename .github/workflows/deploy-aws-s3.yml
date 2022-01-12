@@ -34,7 +34,6 @@ jobs:
           role-session-name: my-github-role-action
 
       - name: Deploy
-        run: aws s3 sync ./test-deploy s3://${{ secrets.AWS_S3_NAME }} --delete
-        # run: aws s3 sync ./dist/frontend s3://${{ secrets.AWS_S3_NAME }}
+        run: aws s3 sync ./dist/frontend s3://${{ secrets.AWS_S3_NAME }} --delete
 
 
