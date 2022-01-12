@@ -7,12 +7,11 @@ name: Frontend S3 CI/CD
 #       - 'frontend/**'
 #       - '.github/workflows/deploy-aws-s3.yml'
 
-on:
-  [push, pull_request]:
-    branches: [ main ]
-    paths: 
-      - 'frontend/**'
-      - '.github/workflows/deploy-aws-s3.yml'
+on: [push, pull_request]
+  branches: [ main ]
+  paths: 
+    - 'frontend/**'
+    - '.github/workflows/deploy-aws-s3.yml'
 
 permissions:
   id-token: write
