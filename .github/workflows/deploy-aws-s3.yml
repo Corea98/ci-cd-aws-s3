@@ -20,8 +20,10 @@ jobs:
         with:
           node-version: 14
 
-      - name: Install dependencies
+      - name: Install Yarn
         run: npm install --global yarn
+
+      - name: Install dependencies
         run: yarn install
 
       - name: Build
