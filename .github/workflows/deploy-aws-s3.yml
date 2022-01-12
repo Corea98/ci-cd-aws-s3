@@ -23,17 +23,18 @@ jobs:
       - name: Install dependencies
         run: |
           cd frontend
-          npm install --global yarn
-          yarn install --frozen-lockfile
+          npm install ci
 
       - name: Test
         run: |
           cd frontend
-          yarn lint
-          yarn test
+          npm run lint
+          npm run test
 
       - name: Build
-        run: yarn build
+        run: |
+          cd frontend
+          npm run build
 
       - name: Setup AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
