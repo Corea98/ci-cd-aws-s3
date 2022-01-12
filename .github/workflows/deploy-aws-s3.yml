@@ -65,9 +65,9 @@ jobs:
       - name: Prints base name in push
         if: github.event_name == 'push'
         env:
-          BASE_BRANCH: ${{ github.base_ref }}
+          BASE_BRANCH: ${GITHUB_REF#refs/heads/}
         run: |
-          echo "Pull request's base branch is: ${BASE_BRANCH}"
+          echo "Push's base branch is: ${BASE_BRANCH}"
 
 
 
