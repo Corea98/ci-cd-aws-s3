@@ -1,7 +1,14 @@
 name: Frontend S3 CI/CD
 
+# on:
+#   push:
+#     branches: [ main ]
+#     paths: 
+#       - 'frontend/**'
+#       - '.github/workflows/deploy-aws-s3.yml'
+
 on:
-  push:
+  [push, pull_request]:
     branches: [ main ]
     paths: 
       - 'frontend/**'
@@ -55,12 +62,10 @@ jobs:
       #   if: success()
       #   run: aws s3 sync ${{ secrets.FRONTEND_BUILD_PATH }} s3://${{ secrets.AWS_S3_NAME }} --delete
 
-      - name: Prints base name in pull request
+      - name: Gets branch on pull_request events
         if: github.event_name == 'pull_request'
-        env:
-          BASE_BRANCH: ${{ github.base_ref }}
-        run: |
-          echo "Pull request's base branch is: ${BASE_BRANCH}"
+        run: echo "##[set-output name=branch;]$(echo ${{ github.base_ref }})"
+        id: pull_request_branch
           
 
       - name: Gets branch on push events
@@ -68,9 +73,13 @@ jobs:
         run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF##*/})"
         id: push_branch
       
-      - name: Print Branch
+      - name: Print Branch on push
         if: github.event_name == 'push'
         run: echo "Actual branch - ${{ steps.push_branch.outputs.branch }}"
+
+      - name: Print Branch on pull_request
+        if: github.event_name == 'push'
+        run: echo "Actual branch - ${{ steps.pull_request_branch.outputs.branch }}"
 
 
 
