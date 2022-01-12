@@ -115,15 +115,9 @@ jobs:
         run: |
           aws s3 sync ${{ secrets.FRONTEND_BUILD_PATH }} s3://${{ secrets.AWS_S3_NAME }} --delete
           echo "Actual branch - ${{ steps.push_branch.outputs.branch }}"
-
       
-      - name: Print Branch on push
-        if: github.event_name == 'push'
-        run: echo "Actual branch - ${{ steps.push_branch.outputs.branch }}"
-
-      - name: Print Branch on pull_request
-        if: github.event_name == 'pull_request'
-        run: echo "Actual branch - ${{ steps.pull_request_branch.outputs.branch }}"
+      - name: Print Branch
+        run: echo "Actual branch - ${{ steps.push_branch.outputs.branch }}${{ steps.pull_request_branch.outputs.branch }}"
 
 
 
