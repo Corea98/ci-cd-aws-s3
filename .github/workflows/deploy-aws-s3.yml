@@ -20,11 +20,16 @@ jobs:
         with:
           node-version: 14
 
-      - name: Install Yarn
-        run: npm install --global yarn
-
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: |
+          cd frontend
+          yarn install --frozen-lockfile
+          npm install --global yarn
+
+      - name: Test
+        run: |
+          yarn lint
+          yarn test
 
       - name: Build
         run: yarn build

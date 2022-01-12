@@ -1,14 +1,10 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
 # compiled output
-/dist
-/tmp
-/out-tsc
-# Only exists if Bazel was run
-/bazel-out
+/frontend/dist
 
 # dependencies
-/node_modules
+/frontend/node_modules
 
 # profiling files
 chrome-profiler-events*.json
@@ -31,15 +27,15 @@ chrome-profiler-events*.json
 .history/*
 
 # misc
-/.angular/cache
-/.sass-cache
-/connect.lock
-/coverage
-/libpeerconnection.log
-npm-debug.log
-yarn-error.log
-testem.log
-/typings
+/frontend/.angular/cache
+/frontend/.sass-cache
+/frontend/connect.lock
+/frontend/coverage
+/frontend/libpeerconnection.log
+/frontend/npm-debug.log
+/frontend/yarn-error.log
+/frontend/testem.log
+/frontend/typings
 
 # System Files
 .DS_Store
