@@ -65,10 +65,10 @@ jobs:
 
       - name: Prints base name in push
         if: github.event_name == 'push'
-        # env:
-        #   BASE_BRANCH: ${{ GITHUB_REF#refs/heads/ }}
+        env:
+          BASE_BRANCH: ${GITHUB_REF##*/}
         run: |
-          echo running on branch ${GITHUB_REF##*/}
+          echo running on branch ${BASE_BRANCH}
 
 
 
