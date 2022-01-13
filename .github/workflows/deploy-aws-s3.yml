@@ -33,7 +33,7 @@ jobs:
           
       - name: Gets branch on push events
         if: github.event_name == 'push'
-        run: echo "##[set-output name=branch;]$(echo ${github.head_ref})"
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF##*/})"
         id: push_branch
 
       - name: Setup node
