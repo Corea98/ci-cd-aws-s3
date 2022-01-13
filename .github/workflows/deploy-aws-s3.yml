@@ -59,7 +59,7 @@ jobs:
           npm run build
 
       - name: Setup AWS credentials
-        if: success() && github.event_name == 'push'
+        if: success() && github.event_name == 'push' && steps.push_branch.outputs.branch == 'main'
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-region: ${{ secrets.AWS_REGION }}
@@ -71,8 +71,8 @@ jobs:
         run: |
           aws s3 sync ${{ secrets.FRONTEND_BUILD_PATH }} s3://${{ secrets.AWS_S3_NAME }} --delete
       
-      # - name: Print Branch
-      #   run: echo "Actual branch - ${{ steps.push_branch.outputs.branch }}${{ steps.pull_request_branch.outputs.branch }}"
+      - name: Print Branch
+        run: echo "Actual branch - ${{ steps.push_branch.outputs.branch }}${{ steps.pull_request_branch.outputs.branch }}"
 
 
 
