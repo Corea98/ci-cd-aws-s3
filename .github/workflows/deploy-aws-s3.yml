@@ -23,15 +23,15 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      # - name: Gets branch on pull_request events
-      #   if: github.event_name == 'pull_request'
-      #   run: echo "##[set-output name=branch;]$(echo ${{ github.base_ref }})"
-      #   id: pull_request_branch
+      - name: Gets branch on pull_request events
+        if: github.event_name == 'pull_request'
+        run: echo "##[set-output name=branch;]$(echo ${{ github.base_ref }})"
+        id: pull_request_branch
           
-      # - name: Gets branch on push events
-      #   if: github.event_name == 'push'
-      #   run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF##*/})"
-      #   id: push_branch
+      - name: Gets branch on push events
+        if: github.event_name == 'push'
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF##*/})"
+        id: push_branch
 
       - name: Setup node
         if: success()
