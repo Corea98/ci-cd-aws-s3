@@ -2,7 +2,7 @@ name: Frontend S3 CI/CD
 
 on:
   push:
-    # branches: [ main, develop, staging ]
+    # branches: [ main, develop, staging ] 
     paths: 
       - 'frontend/**'
       - '.github/workflows/deploy-aws-s3.yml'
