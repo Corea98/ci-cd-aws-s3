@@ -1,12 +1,5 @@
 name: Frontend S3 CI/CD
 
-# on:
-#   push:
-#     branches: [ main ]
-#     paths: 
-#       - 'frontend/**'
-#       - '.github/workflows/deploy-aws-s3.yml'
-
 on:
   push:
     branches: [ main ]
@@ -30,52 +23,15 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      # - name: Setup node
-      #   if: success()
-      #   uses: actions/setup-node@v1
-      #   with:
-      #     node-version: 14
-
-      # - name: Install dependencies
-      #   if: success()
-      #   run: |
-      #     cd frontend
-      #     npm install ci
-
-      # - name: Test
-      #   if: success()
-      #   run: |
-      #     cd frontend
-      #     npm run lint
-      #     # npm run test
-
-      # - name: Build
-      #   if: success()
-      #   run: |
-      #     cd frontend
-      #     npm run build
-
-      # - name: Setup AWS credentials
-      #   if: success()
-      #   uses: aws-actions/configure-aws-credentials@v1
-      #   with:
-      #     aws-region: ${{ secrets.AWS_REGION }}
-      #     role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
-      #     role-session-name: my-github-role-action
-
-      # - name: Deploy
-      #   if: success()
-      #   run: aws s3 sync ${{ secrets.FRONTEND_BUILD_PATH }} s3://${{ secrets.AWS_S3_NAME }} --delete
-
-      - name: Gets branch on pull_request events
-        if: github.event_name == 'pull_request'
-        run: echo "##[set-output name=branch;]$(echo ${{ github.base_ref }})"
-        id: pull_request_branch
+      # - name: Gets branch on pull_request events
+      #   if: github.event_name == 'pull_request'
+      #   run: echo "##[set-output name=branch;]$(echo ${{ github.base_ref }})"
+      #   id: pull_request_branch
           
-      - name: Gets branch on push events
-        if: github.event_name == 'push'
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF##*/})"
-        id: push_branch
+      # - name: Gets branch on push events
+      #   if: github.event_name == 'push'
+      #   run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF##*/})"
+      #   id: push_branch
 
       - name: Setup node
         if: success()
@@ -116,8 +72,8 @@ jobs:
           aws s3 sync ${{ secrets.FRONTEND_BUILD_PATH }} s3://${{ secrets.AWS_S3_NAME }} --delete
           echo "Actual branch - ${{ steps.push_branch.outputs.branch }}"
       
-      - name: Print Branch
-        run: echo "Actual branch - ${{ steps.push_branch.outputs.branch }}${{ steps.pull_request_branch.outputs.branch }}"
+      # - name: Print Branch
+      #   run: echo "Actual branch - ${{ steps.push_branch.outputs.branch }}${{ steps.pull_request_branch.outputs.branch }}"
 
 
 
