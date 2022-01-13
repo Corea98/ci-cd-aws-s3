@@ -7,9 +7,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  headers = JSON.stringify({
-    test: 'test'
-  });
+  headers = JSON.stringify({});
 
   getHeaders(): void {
     // const res = this.http.get(document.location.origin);
@@ -21,7 +19,7 @@ export class AppComponent {
     req.open('GET', document.location.origin, false);
     req.send(null);
     var headers = req.getAllResponseHeaders().toLowerCase();
-    alert(headers);
+    this.headers = JSON.stringify(headers);
   }
 
   constructor(
