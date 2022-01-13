@@ -2,12 +2,12 @@ name: Frontend S3 CI/CD
 
 on:
   push:
-    branches: [ main ]
+    # branches: [ main, develop, staging ]
     paths: 
       - 'frontend/**'
       - '.github/workflows/deploy-aws-s3.yml'
   pull_request:
-    branches: [ main ]
+    branches: [ main, develop, staging ]
     paths: 
       - 'frontend/**'
       - '.github/workflows/deploy-aws-s3.yml'
@@ -67,7 +67,7 @@ jobs:
           role-session-name: my-github-role-action
 
       - name: Deploy
-        if: success() && github.event_name == 'push'
+        if: success() && github.event_name == 'push' && steps.push_branch.outputs.branch == 'main'
         run: |
           aws s3 sync ${{ secrets.FRONTEND_BUILD_PATH }} s3://${{ secrets.AWS_S3_NAME }} --delete
       
