@@ -56,7 +56,7 @@ jobs:
             #{{ runner.os }}-
 
       - name: Install dependencies
-        if: success() && myCacheStep.outputs.cache-hit != 'true'
+        if: success() && steps.myCacheStep.outputs.cache-hit != 'true'
         run: npm install ci
 
       - name: Test
