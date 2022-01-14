@@ -36,8 +36,14 @@ jobs:
         run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
         id: push_branch
 
+      - name: Setup node
+        if: success()
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14
+
       - name: Cache dependencies
-        id: cacheStep
+        id: myCacheStep
         uses: actions/cache@v2
         env:
           cache-name: cache-node-modules
@@ -49,14 +55,8 @@ jobs:
             ${{ runner.os }}-build-
             #{{ runner.os }}-
 
-      - name: Setup node
-        if: success()
-        uses: actions/setup-node@v1
-        with:
-          node-version: 14
-
       - name: Install dependencies
-        if: success() && cacheStep.outputs.cache-hit != 'true'
+        if: success() && myCacheStep.outputs.cache-hit != 'true'
         run: npm install ci
 
       - name: Test
