@@ -26,18 +26,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Cache dependencies
-        uses: actions/cache@v2
-        env:
-          cache-name: cache-node-modules
-        with:
-          path: ~/node_modules
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            #{{ runner.os }}-
-
       - name: Gets branch on pull_request events
         if: github.event_name == 'pull_request'
         run: echo "##[set-output name=branch;]$(echo ${{ github.base_ref }})"
@@ -48,6 +36,19 @@ jobs:
         run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
         id: push_branch
 
+      - name: Cache dependencies
+        id: cacheStep
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            #{{ runner.os }}-
+
       - name: Setup node
         if: success()
         uses: actions/setup-node@v1
@@ -55,7 +56,7 @@ jobs:
           node-version: 14
 
       - name: Install dependencies
-        if: success()
+        if: success() && cacheStep.outputs.cache-hit != 'true'
         run: npm install ci
 
       - name: Test
