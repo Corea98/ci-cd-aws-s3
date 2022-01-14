@@ -43,17 +43,21 @@ jobs:
           node-version: 14
 
       - name: Cache node modules
-        uses: actions/cache@v1
+        id: cache-nodemodules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
         with:
+          # caching node_modules
           path: node_modules
-          key: ${{ runner.OS }}-build-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.OS }}-build-
-            ${{ runner.OS }}-
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
 
       - name: Install dependencies
-        # if: success() && steps.myCacheStep.outputs.cache-hit != 'true'
-        if: success()
+        if: success() && steps.cache-nodemodules.outputs.cache-hit != 'true'
         run: npm install ci
 
       - name: Test
