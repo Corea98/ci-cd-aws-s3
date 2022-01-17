@@ -95,9 +95,9 @@ jobs:
       - name: Deploy
         if: success() && github.event_name == 'push' && steps.environment.outputs.actual != 'other'
         run: |
-          if [ '${{ steps.env.outputs.actual }}' == 'prod' ]; then
+          if [ '${{ steps.environment.outputs.actual }}' == 'prod' ]; then
             aws s3 sync ${{ secrets.FRONTEND_BUILD_PATH }} s3://${{ secrets.AWS_S3_NAME }} --delete
-          elif [ '${{ steps.env.outputs.actual }}' == 'stg' ]; then
+          elif [ '${{ steps.environment.outputs.actual }}' == 'stg' ]; then
             aws s3 sync ${{ secrets.FRONTEND_BUILD_PATH }} s3://${{ secrets.AWS_S3_NAME }} --delete
           else
             aws s3 sync ${{ secrets.FRONTEND_BUILD_PATH }} s3://${{ secrets.AWS_S3_NAME }} --delete
