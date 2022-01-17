@@ -42,7 +42,6 @@ jobs:
       #   env:
       #     cache-name: cache-node-modules
       #   with:
-      #     # caching node_modules
       #     path: frontend/node_modules
       #     key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
       #     restore-keys: |
@@ -58,12 +57,15 @@ jobs:
       #   if: success()
       #   run: |
       #     npm run lint
-      #     npm run test:prod
+      #     npm run test:ci
 
-      # - name: Build
-      #   if: success()
-      #   run: |
-      #     npm run build
+      - name: Build
+        if: success()
+        env:
+          ENVIRONMENT_BUILD: ${{ steps.branch_name.outputs.branch === 'main' ? 'prod' || steps.branch_name.outputs.branch === 'staging' ? 'stg' || 'dev' }}
+        run: |
+          echo "Actual enviroment - ${{ ENVIRONMENT_BUILD }}"
+          # npm run build
 
       # - name: Setup AWS credentials
       #   if: success() && github.event_name == 'push' && steps.branch_name.outputs.branch == 'main'
@@ -78,8 +80,8 @@ jobs:
       #   run: |
       #     aws s3 sync ${{ secrets.FRONTEND_BUILD_PATH }} s3://${{ secrets.AWS_S3_NAME }} --delete
       
-      - name: Print Branch
-        run: echo "Actual branch - ${{ steps.branch_name.outputs.branch }}"
+      # - name: Print Branch
+      #   run: echo "Actual branch - ${{ steps.branch_name.outputs.branch }}"
 
 
 
