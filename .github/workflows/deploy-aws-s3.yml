@@ -68,7 +68,7 @@ jobs:
           npm run build:${{ steps.environment.outputs.actual }}
 
       - name: Setup AWS credentials
-        if: success() && github.event_name == 'push' && steps.environment.outputs.actual == 'main'
+        if: success() && github.event_name == 'push' && steps.environment.outputs.actual == 'prod'
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-region: ${{ secrets.AWS_REGION }}
@@ -76,7 +76,7 @@ jobs:
           role-session-name: my-github-role
 
       - name: Deploy
-        if: success() && github.event_name == 'push' && steps.environment.outputs.actual == 'main'
+        if: success() && github.event_name == 'push' && steps.environment.outputs.actual == 'prod'
         run: |
           aws s3 sync ${{ secrets.FRONTEND_BUILD_PATH }} s3://${{ secrets.AWS_S3_NAME }} --delete
       
