@@ -81,8 +81,9 @@ jobs:
           aws s3 sync ${{ secrets.FRONTEND_BUILD_PATH }} s3://${{ secrets.AWS_S3_NAME }} --delete
       
       - name: Print branch and environment
-        run: echo "Actual branch - ${{ steps.branch_name.outputs.actual }}"
-        run: echo "Actual environment - ${{ steps.environment.outputs.actual }}"
+        run: |
+          echo "Actual branch - ${{ steps.branch_name.outputs.actual }}"
+          echo "Actual environment - ${{ steps.environment.outputs.actual }}"
 
 
 
