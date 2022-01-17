@@ -46,7 +46,7 @@ jobs:
           cache-name: cache-node-modules
         with:
           path: frontend/node_modules
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
@@ -54,7 +54,7 @@ jobs:
 
       - name: Install dependencies
         if: success() && steps.cache-nodemodules.outputs.cache-hit != 'true'
-        run: npm install ci
+        run: npm ci
 
       - name: Test
         if: success()
@@ -68,7 +68,7 @@ jobs:
           npm run build:${{ steps.environment.outputs.actual }}
 
       - name: Setup AWS credentials
-        if: success() && github.event_name == 'push' && steps.environment.outputs.actual != 'other'
+        if: success() && github.event_name == 'push' && steps.environment.outputs.actual == 'main'
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-region: ${{ secrets.AWS_REGION }}
@@ -76,7 +76,7 @@ jobs:
           role-session-name: my-github-role
 
       - name: Deploy
-        if: success() && github.event_name == 'push' && steps.environment.outputs.actual != 'other'
+        if: success() && github.event_name == 'push' && steps.environment.outputs.actual == 'main'
         run: |
           aws s3 sync ${{ secrets.FRONTEND_BUILD_PATH }} s3://${{ secrets.AWS_S3_NAME }} --delete
       
@@ -84,6 +84,3 @@ jobs:
         run: |
           echo "Actual branch - ${{ steps.branch_name.outputs.actual }}"
           echo "Actual environment - ${{ steps.environment.outputs.actual }}"
-
-
-
