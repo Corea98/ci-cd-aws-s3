@@ -69,7 +69,7 @@ jobs:
 
       - name: Get bucket to deploy
         if: success() && github.event_name == 'push' && steps.environment.outputs.actual != 'other'
-        run: echo "##[set-output name=actual;]$(echo ${{ steps.branch_name.outputs.actual == 'main' && ${{ secrets.AWS_S3_NAME }} || steps.branch_name.outputs.actual == 'staging' && ${{ secrets.AWS_S3_NAME }} || ${{ secrets.AWS_S3_NAME }} }})"        
+        run: echo "##[set-output name=actual;]$(echo ${{ steps.branch_name.outputs.actual == 'main' && secrets.AWS_S3_NAME || steps.branch_name.outputs.actual == 'staging' && secrets.AWS_S3_NAME || secrets.AWS_S3_NAME }})"        
         id: bucket
 
       - name: Setup AWS credentials

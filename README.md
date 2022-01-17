@@ -93,6 +93,11 @@ runs-on: ubuntu-latest
   run: |
     npm run build:${{ steps.environment.outputs.actual }}
 
+- name: Get bucket to deploy
+  if: success() && github.event_name == 'push' && steps.environment.outputs.actual != 'other'
+  run: echo "##[set-output name=actual;]$(echo ${{ steps.branch_name.outputs.actual == 'main' && secrets.AWS_S3_NAME || steps.branch_name.outputs.actual == 'staging' && secrets.AWS_S3_NAME || secrets.AWS_S3_NAME }})"        
+  id: bucket
+
 - name: Setup AWS credentials
   if: success() && github.event_name == 'push' && steps.environment.outputs.actual != 'other'
   uses: aws-actions/configure-aws-credentials@v1
@@ -104,7 +109,7 @@ runs-on: ubuntu-latest
 - name: Deploy
   if: success() && github.event_name == 'push' && steps.environment.outputs.actual != 'other'
   run: |
-    aws s3 sync ${{ secrets.FRONTEND_BUILD_PATH }} s3://${{ secrets.AWS_S3_NAME }} --delete
+    aws s3 sync ${{ secrets.FRONTEND_BUILD_PATH }} s3://${{ steps.bucket.outputs.actual }} --delete
 
 - name: Print branch and environment
   run: |
