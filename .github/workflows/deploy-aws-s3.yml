@@ -31,7 +31,7 @@ jobs:
         id: branch_name
 
       - name: Get environment
-        run: echo "##[set-output name=actual;]$(echo ${{ steps.branch_name.outputs.branch == 'main' && 'prod' || steps.branch_name.outputs.branch == 'staging' && 'stg' || steps.branch_name.outputs.branch == 'develop' && 'dev' || 'other' }})"        
+        run: echo "##[set-output name=actual;]$(echo ${{ steps.branch_name.outputs.actual == 'main' && 'prod' || steps.branch_name.outputs.actual == 'staging' && 'stg' || steps.branch_name.outputs.actual == 'develop' && 'dev' || 'other' }})"        
         id: environment
  
       # - name: Setup node
