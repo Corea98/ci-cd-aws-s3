@@ -63,7 +63,7 @@ jobs:
           npm run test:ci
 
       - name: Build
-        if: success()
+        if: success() && steps.environment.outputs.actual != 'other'
         run: |
           npm run build:${{ steps.environment.outputs.actual }}
 
