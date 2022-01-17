@@ -11,6 +11,7 @@ on:
       - 'frontend/**'
       - '.github/workflows/deploy-aws-s3.yml'
 
+# Required permissions for deploy to AWS S3 bucket
 permissions:
   id-token: write
   contents: read
@@ -23,12 +24,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Checkout repository
       - uses: actions/checkout@v2
 
+      # Get actual branch name
       - name: Get branch name
         run: echo "##[set-output name=actual;]$(echo ${{ github.base_ref }}${GITHUB_REF#refs/heads/})"
         id: branch_name
 
+      # Set environment variable based on branch
       - name: Get environment
         run: |
           echo "##[set-output name=actual;]$(echo ${{ 
@@ -39,12 +43,14 @@ jobs:
           }})"        
         id: environment
  
+      # Set node v14
       - name: Setup node
         if: success()
         uses: actions/setup-node@v1
         with:
           node-version: 14
 
+      # Restore or cache node modules
       - name: Cache node modules
         id: cache-nodemodules
         uses: actions/cache@v2
@@ -58,21 +64,25 @@ jobs:
             ${{ runner.os }}-build-
             ${{ runner.os }}-
 
+      # Install dependencies if cache doesn't exist
       - name: Install dependencies
         if: success() && steps.cache-nodemodules.outputs.cache-hit != 'true'
         run: npm ci
 
+      # Run lint and angular tests
       - name: Test
         if: success()
         run: |
           npm run lint
           npm run test:ci
 
+      # Build project only if branch is main, staging or develop
       - name: Build
         if: success() && steps.environment.outputs.actual != 'other'
         run: |
           npm run build:${{ steps.environment.outputs.actual }}
 
+      # Setup AWS credentials when push on branches main, staging or develop
       - name: Setup AWS credentials
         if: success() && github.event_name == 'push' && steps.environment.outputs.actual != 'other'
         uses: aws-actions/configure-aws-credentials@v1
@@ -81,6 +91,7 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           role-session-name: my-github-role
 
+      # Deploy to AWS S3 bucket when push on branches main, staging or develop
       - name: Deploy
         if: success() && github.event_name == 'push' && steps.environment.outputs.actual != 'other'
         run: |
@@ -92,6 +103,7 @@ jobs:
             aws s3 sync ${{ secrets.FRONTEND_BUILD_PATH }} s3://${{ secrets.AWS_S3_NAME }} --delete
           fi
       
+      # Verify some variables
       - name: Print branch and environment
         run: |
           echo "Actual branch - ${{ steps.branch_name.outputs.actual }}"
