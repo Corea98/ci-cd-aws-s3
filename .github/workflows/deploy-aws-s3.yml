@@ -28,8 +28,6 @@ jobs:
 
       - name: Get branch name
         run: echo "##[set-output name=branch;]$(echo ${{ github.base_ref }}${GITHUB_REF#refs/heads/})"
-        env:
-          TEST_ENV: ${{ steps.branch_name.outputs.branch == 'main' && 'prod' || steps.branch_name.outputs.branch == 'staging' && 'stg' || 'dev' }}
         id: branch_name
  
       # - name: Setup node
@@ -64,7 +62,7 @@ jobs:
       - name: Build
         if: success()
         run: |
-          echo "Actual enviroment - ${{ TEST_ENV }}"
+          echo "Actual enviroment - ${{ steps.branch_name.outputs.branch == 'main' && 'prod' || steps.branch_name.outputs.branch == 'staging' && 'stg' || 'dev' }}"
           # npm run build
 
       # - name: Setup AWS credentials
