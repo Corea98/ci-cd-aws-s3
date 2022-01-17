@@ -66,7 +66,7 @@ jobs:
       - name: Build
         if: success()
         run: |
-          echo "Actual enviroment - ${{ steps.environment.outputs.actual }"
+          echo "Actual enviroment - ${{ steps.environment.outputs.actual }}"
           # npm run build
 
       # - name: Setup AWS credentials
