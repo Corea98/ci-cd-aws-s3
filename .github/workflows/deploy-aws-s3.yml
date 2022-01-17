@@ -89,4 +89,3 @@ jobs:
         run: |
           echo "Actual branch - ${{ steps.branch_name.outputs.actual }}"
           echo "Actual environment - ${{ steps.environment.outputs.actual }}"
-          echo "Actual bucket - ${{ steps.bucket.outputs.actual }}"
