@@ -62,7 +62,7 @@ jobs:
       - name: Build
         if: success()
         env:
-          ENVIRONMENT_BUILD: ${{ steps.branch_name.outputs.branch === 'main' ? 'prod' || steps.branch_name.outputs.branch === 'staging' ? 'stg' || 'dev' }}
+          ENVIRONMENT_BUILD: ${{ steps.branch_name.outputs.branch == 'main' ? 'prod' || steps.branch_name.outputs.branch == 'staging' ? 'stg' || 'dev' }}
         run: |
           echo "Actual enviroment - ${{ ENVIRONMENT_BUILD }}"
           # npm run build
