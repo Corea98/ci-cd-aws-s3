@@ -80,7 +80,7 @@ runs-on: ubuntu-latest
 
 - name: Install dependencies
   if: success() && steps.cache-nodemodules.outputs.cache-hit != 'true'
-  run: npm install ci
+  run: npm ci
 
 - name: Test
   if: success()
@@ -89,7 +89,7 @@ runs-on: ubuntu-latest
     npm run test:ci
 
 - name: Build
-  if: success()
+  if: success() && steps.environment.outputs.actual != 'other'
   run: |
     npm run build:${{ steps.environment.outputs.actual }}
 
@@ -99,7 +99,7 @@ runs-on: ubuntu-latest
   with:
     aws-region: ${{ secrets.AWS_REGION }}
     role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
-    role-session-name: my-github-role-action
+    role-session-name: my-github-role
 
 - name: Deploy
   if: success() && github.event_name == 'push' && steps.environment.outputs.actual != 'other'
@@ -107,6 +107,7 @@ runs-on: ubuntu-latest
     aws s3 sync ${{ secrets.FRONTEND_BUILD_PATH }} s3://${{ secrets.AWS_S3_NAME }} --delete
 
 - name: Print branch and environment
-  run: echo "Actual branch - ${{ steps.branch_name.outputs.actual }}"
-  run: echo "Actual environment - ${{ steps.environment.outputs.actual }}"
+  run: |
+    echo "Actual branch - ${{ steps.branch_name.outputs.actual }}"
+    echo "Actual environment - ${{ steps.environment.outputs.actual }}"
 ```
