@@ -32,10 +32,10 @@ jobs:
       - name: Get environment
         run: |
           echo "##[set-output name=actual;]$(echo ${{ 
-            steps.branch_name.outputs.actual == 'main' && 'prod' 
-            || steps.branch_name.outputs.actual == 'staging' && 'stg' 
-            || steps.branch_name.outputs.actual == 'develop' && 'dev' 
-            || 'other' 
+            steps.branch_name.outputs.actual == 'main' && 'prod' || 
+            steps.branch_name.outputs.actual == 'staging' && 'stg' || 
+            steps.branch_name.outputs.actual == 'develop' && 'dev' || 
+            'other' 
           }})"        
         id: environment
  
