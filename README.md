@@ -57,15 +57,12 @@ runs-on: ubuntu-latest
 
 - name: Get environment
   run: |
-    if [ '${{ steps.branch_name.outputs.actual }}' == 'main' ]; then
-      echo "##[set-output name=actual;]$(echo 'prod')"
-    if [ '${{ steps.branch_name.outputs.actual }}' == 'staging' ]; then
-      echo "##[set-output name=actual;]$(echo 'stg')"
-    if [ '${{ steps.branch_name.outputs.actual }}' == 'develop' ]; then
-      echo "##[set-output name=actual;]$(echo 'dev')"
-    else
-      echo "##[set-output name=actual;]$(echo 'other')"
-    fi
+    echo "##[set-output name=actual;]$(echo ${{ 
+      steps.branch_name.outputs.actual == 'main' && 'prod' || 
+      steps.branch_name.outputs.actual == 'staging' && 'stg' || 
+      steps.branch_name.outputs.actual == 'develop' && 'dev' || 
+      'other' 
+    }})"        
   id: environment
 
 - name: Setup node
