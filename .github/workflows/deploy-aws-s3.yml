@@ -77,19 +77,13 @@ jobs:
           npm run test:ci
 
       # SonarCloud
-      name: SonarCloud
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v2
-          with:
-            fetch-depth: 0
-        - name: SonarCloud Scan
-          uses: SonarSource/sonarcloud-github-action@master
-          with:
-            projectBaseDir: frontend
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
-            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} #5b767fb93978ffd51b368ffd2c70d707214d8d99
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        with:
+          projectBaseDir: frontend
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} #5b767fb93978ffd51b368ffd2c70d707214d8d99
 
       # Build project only if branch is main, staging or develop
       - name: Build
