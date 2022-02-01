@@ -15,6 +15,7 @@ jobs:
     defaults:
       run:
         working-directory: frontend
+    environment: Develop
     runs-on: ubuntu-latest
 
     steps:
