@@ -83,7 +83,7 @@ jobs:
           projectBaseDir: frontend
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} #5b767fb93978ffd51b368ffd2c70d707214d8d99
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       # Build project only if branch is main, staging or develop
       - name: Build
