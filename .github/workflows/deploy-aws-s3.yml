@@ -2,14 +2,8 @@ name: Frontend S3 CI/CD
 
 on:
   push:
-    paths: 
-      - 'frontend/**'
-      - '.github/workflows/deploy-aws-s3.yml'
-  pull_request:
-    branches: [ main, develop, staging ]
-    paths: 
-      - 'frontend/**'
-      - '.github/workflows/deploy-aws-s3.yml'
+    branches:
+    - feature/test-environments
 
 # Required permissions for deploy to AWS S3 bucket
 permissions:
@@ -26,22 +20,6 @@ jobs:
     steps:
       # Checkout repository
       - uses: actions/checkout@v2
-
-      # Get actual branch name
-      - name: Get branch name
-        run: echo "##[set-output name=actual;]$(echo ${{ github.base_ref }}${GITHUB_REF#refs/heads/})"
-        id: branch_name
-
-      # Set environment variable based on branch
-      - name: Get environment
-        run: |
-          echo "##[set-output name=actual;]$(echo ${{ 
-            steps.branch_name.outputs.actual == 'main' && 'prod' || 
-            steps.branch_name.outputs.actual == 'staging' && 'stg' || 
-            steps.branch_name.outputs.actual == 'develop' && 'dev' || 
-            'other' 
-          }})"        
-        id: environment
  
       # Set node v14
       - name: Setup node
@@ -50,23 +28,9 @@ jobs:
         with:
           node-version: 14
 
-      # Restore or cache node modules
-      - name: Cache node modules
-        id: cache-nodemodules
-        uses: actions/cache@v2
-        env:
-          cache-name: cache-node-modules
-        with:
-          path: frontend/node_modules
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
-
       # Install dependencies if cache doesn't exist
       - name: Install dependencies
-        if: success() && steps.cache-nodemodules.outputs.cache-hit != 'true'
+        if: success()
         run: npm ci
 
       # Run lint and angular tests
@@ -78,13 +42,13 @@ jobs:
 
       # Build project only if branch is main, staging or develop
       - name: Build
-        if: success() && steps.environment.outputs.actual != 'other'
+        if: success()
         run: |
-          npm run build:${{ steps.environment.outputs.actual }}
+          npm run build:dev
 
       # Setup AWS credentials when push on branches main, staging or develop
       - name: Setup AWS credentials
-        if: success() && github.event_name == 'push' && steps.environment.outputs.actual != 'other'
+        if: success()
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-region: ${{ secrets.AWS_REGION }}
@@ -93,18 +57,5 @@ jobs:
 
       # Deploy to AWS S3 bucket when push on branches main, staging or develop
       - name: Deploy
-        if: success() && github.event_name == 'push' && steps.environment.outputs.actual != 'other'
-        run: |
-          if [ '${{ steps.environment.outputs.actual }}' == 'prod' ]; then
-            aws s3 sync ${{ secrets.FRONTEND_BUILD_PATH }} s3://${{ secrets.AWS_S3_NAME }} --delete
-          elif [ '${{ steps.environment.outputs.actual }}' == 'stg' ]; then
-            aws s3 sync ${{ secrets.FRONTEND_BUILD_PATH }} s3://${{ secrets.AWS_S3_NAME }} --delete
-          else
-            aws s3 sync ${{ secrets.FRONTEND_BUILD_PATH }} s3://${{ secrets.AWS_S3_NAME }} --delete
-          fi
-      
-      # Verify some variables
-      - name: Print branch and environment
-        run: |
-          echo "Actual branch - ${{ steps.branch_name.outputs.actual }}"
-          echo "Actual environment - ${{ steps.environment.outputs.actual }}"
+        if: success()
+        run: aws s3 sync ${{ secrets.FRONTEND_BUILD_PATH }} s3://${{ secrets.AWS_S3_NAME }} --delete
