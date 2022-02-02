@@ -63,7 +63,7 @@ jobs:
 
     steps:
       - name: sonar
-        run: echo sonar
+        run: echo "sonar"
 
 
   build-deploy:
