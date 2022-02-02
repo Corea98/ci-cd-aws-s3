@@ -88,29 +88,13 @@ jobs:
           else
              echo "::set-output name=env_name::Features"
           fi         
-
-      # OUTPUT ENVIRONMENT FOR BUILD
-      - name: Some check on branch
-        id: build_env
-        run: |
-          if [ "${{ steps.branch_check.outputs.env_name }}" = "Production" ]; then
-            echo "::set-output name=build_name::prd"
-          elif [ "${{ steps.branch_check.outputs.env_name }}" = "Staging" ]; then
-            echo "::set-output name=build_name::stg"
-          elif [ "${{ steps.branch_check.outputs.env_name }}" = "Development" ]; then
-            echo "::set-output name=build_name::dev"
-          else
-             echo "::set-output name=build_name::unk"
-          fi         
           
       - name: Use variable setup in previous step
         run: |
           echo "Branch check: ${{ steps.branch_check.outputs.env_name }}"
-          echo "Branch env: ${{ steps.build_env.outputs.build_name }}"
         
     outputs:
-      - env_name: ${{ steps.branch_check.outputs.env_name }}
-      - build_name: ${{ steps.build_env.outputs.build_name }}
+      env_name: ${{ steps.branch_check.outputs.env_name }}
 
   deploy:
     needs: [test, sonar-cloud] 
@@ -132,6 +116,20 @@ jobs:
         with:
           node-version: 14
 
+      # OUTPUT ENVIRONMENT FOR BUILD
+      - name: Some check on branch
+        id: build_env
+        run: |
+          if [ "${{ needs.test.outputs.env_name }}" = "Production" ]; then
+            echo "::set-output name=build_name::prd"
+          elif [ "${{ needs.test.outputs.env_name }}" = "Staging" ]; then
+            echo "::set-output name=build_name::stg"
+          elif [ "${{ needs.test.outputs.env_name }}" = "Development" ]; then
+            echo "::set-output name=build_name::dev"
+          else
+             echo "::set-output name=build_name::unk"
+          fi         
+
       # Restore node modules
       - name: Cache node modules
         id: cache-nodemodules
@@ -150,7 +148,7 @@ jobs:
       - name: Build
         if: success()
         run: |
-          npm run build:${{ needs.test.outputs.build_env }}
+          npm run build:${{ steps.build_env.outputs.build_name }}
 
       # Setup AWS credentials when push on branches main, staging or develop
       - name: Setup AWS credentials
