@@ -21,9 +21,14 @@ jobs:
       # Checkout repository
       - uses: actions/checkout@v2
 
-      # Sonar
-      - name: sonar
-        run: echo "sonar"
+      # SonarCloud
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        with:
+          projectBaseDir: frontend
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   test:
     defaults:
