@@ -106,6 +106,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       # Deploy to AWS S3 bucket when push on branches main, staging or develop
-      # - name: Deploy
-      #   if: success()
-      #   run: aws s3 sync ${{ secrets.FRONTEND_BUILD_PATH }} s3://${{ secrets.AWS_S3_NAME }} --delete
+      - name: Deploy
+        if: success()
+        run: aws s3 sync ${{ secrets.FRONTEND_BUILD_PATH }} s3://${{ secrets.AWS_S3_NAME }} --delete
