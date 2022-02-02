@@ -11,6 +11,20 @@ permissions:
   contents: read
 
 jobs:
+  sonar-cloud:
+    defaults:
+      run:
+        working-directory: frontend
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout repository
+      - uses: actions/checkout@v2
+
+      # Sonar
+      - name: sonar
+        run: echo "sonar"
+
   test:
     defaults:
       run:
@@ -75,27 +89,13 @@ jobs:
     outputs:
       env_name: ${{ steps.branch_check.outputs.env_name }}
 
-  sonar-cloud:
-    defaults:
-      run:
-        working-directory: frontend
-    runs-on: ubuntu-latest
-
-    steps:
-      # Checkout repository
-      - uses: actions/checkout@v2
-
-      # Sonar
-      - name: sonar
-        run: echo "sonar"
-
   deploy:
     needs: [test, sonar-cloud] 
     if: needs.test.outputs.env_name != 'Features'
     defaults:
       run:
         working-directory: frontend
-    environment: ${{ needs.build.outputs.env_name }}
+    environment: ${{ needs.test.outputs.env_name }}
     runs-on: ubuntu-latest
 
     steps:
