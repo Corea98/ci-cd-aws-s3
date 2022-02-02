@@ -81,7 +81,7 @@ jobs:
         run: echo "sonar"
 
   deploy:
-    needs: [test, sonar-cloud]
+    needs: [test-build, sonar-cloud]
     defaults:
       run:
         working-directory: frontend
