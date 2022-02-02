@@ -109,8 +109,8 @@ jobs:
           echo "Branch env: ${{ steps.build_env.outputs.build_name }}"
         
     outputs:
-      env_name: ${{ steps.branch_check.outputs.env_name }}
-      build_name: ${{ steps.build_env.outputs.build_name }}
+      - env_name: ${{ steps.branch_check.outputs.env_name }}
+      - build_name: ${{ steps.build_env.outputs.build_name }}
 
   deploy:
     needs: [test, sonar-cloud] 
