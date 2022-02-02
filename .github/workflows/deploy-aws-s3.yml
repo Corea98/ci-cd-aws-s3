@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - "frontend/**"
+      - ".github/workflows/deploy-aws-s3.yml"
 
 # Required permissions for deploy to AWS S3 bucket
 permissions:
