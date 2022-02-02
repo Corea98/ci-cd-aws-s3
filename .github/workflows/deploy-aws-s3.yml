@@ -92,7 +92,7 @@ jobs:
       # Print environment to check it's correct
       - name: Print environment
         run: |
-          echo "Actual environment: ${{ steps.branch_check.outputs.env_name }}"
+          echo "Environment: ${{ steps.branch_check.outputs.env_name }}"
         
     outputs:
       env_name: ${{ steps.branch_check.outputs.env_name }}
