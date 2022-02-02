@@ -84,7 +84,7 @@ jobs:
           elif [ "${{ github.ref }}" = "refs/heads/staging" ]; then
             echo "::set-output name=env_name::Staging"
           elif [ "${{ github.ref }}" = "refs/heads/feature/test-environments" ]; then
-            echo "::set-output name=env_name::Development"
+            echo "::set-output name=env_name::Develop"
           else
              echo "::set-output name=env_name::Features"
           fi         
@@ -114,21 +114,7 @@ jobs:
         if: success()
         uses: actions/setup-node@v1
         with:
-          node-version: 14
-
-      # OUTPUT ENVIRONMENT FOR BUILD
-      - name: Some check on branch
-        id: build_env
-        run: |
-          if [ "${{ needs.test.outputs.env_name }}" = "Production" ]; then
-            echo "::set-output name=build_name::prd"
-          elif [ "${{ needs.test.outputs.env_name }}" = "Staging" ]; then
-            echo "::set-output name=build_name::stg"
-          elif [ "${{ needs.test.outputs.env_name }}" = "Development" ]; then
-            echo "::set-output name=build_name::dev"
-          else
-             echo "::set-output name=build_name::unk"
-          fi         
+          node-version: 14   
 
       # Restore node modules
       - name: Cache node modules
@@ -143,6 +129,20 @@ jobs:
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
             ${{ runner.os }}-
+
+      # OUTPUT ENVIRONMENT FOR BUILD
+      - name: Some check on branch
+        id: build_env
+        run: |
+          if [ "${{ needs.test.outputs.env_name }}" = "Production" ]; then
+            echo "::set-output name=build_name::prd"
+          elif [ "${{ needs.test.outputs.env_name }}" = "Staging" ]; then
+            echo "::set-output name=build_name::stg"
+          elif [ "${{ needs.test.outputs.env_name }}" = "Develop" ]; then
+            echo "::set-output name=build_name::dev"
+          else
+             echo "::set-output name=build_name::unk"
+          fi      
             
       # Build project only if branch is main, staging or develop
       - name: Build
