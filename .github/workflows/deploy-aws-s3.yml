@@ -62,6 +62,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Checkout repository
+      - uses: actions/checkout@v2
+
+      # Sonar
       - name: sonar
         run: echo "sonar"
 
