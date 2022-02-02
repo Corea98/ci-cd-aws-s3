@@ -84,16 +84,33 @@ jobs:
           elif [ "${{ github.ref }}" = "refs/heads/staging" ]; then
             echo "::set-output name=env_name::Staging"
           elif [ "${{ github.ref }}" = "refs/heads/feature/test-environments" ]; then
-            echo "::set-output name=env_name::Features"
+            echo "::set-output name=env_name::Development"
           else
              echo "::set-output name=env_name::Features"
           fi         
+
+      # OUTPUT ENVIRONMENT FOR BUILD
+      - name: Some check on branch
+        id: build_env
+        run: |
+          if [ "${{ steps.branch_check.outputs.env_name }}" = "Production" ]; then
+            echo "::set-output name=build_name::prd"
+          elif [ "${{ steps.branch_check.outputs.env_name }}" = "Staging" ]; then
+            echo "::set-output name=build_name::stg"
+          elif [ "${{ steps.branch_check.outputs.env_name }}" = "Development" ]; then
+            echo "::set-output name=build_name::dev"
+          else
+             echo "::set-output name=build_name::unk"
+          fi         
           
       - name: Use variable setup in previous step
-        run: echo "I'm using variable ${{ steps.branch_check.outputs.env_name }}"
+        run: |
+          echo "Branch check: ${{ steps.branch_check.outputs.env_name }}"
+          echo "Branch env: ${{ steps.build_env.outputs.build_name }}"
         
     outputs:
       env_name: ${{ steps.branch_check.outputs.env_name }}
+      build_name: ${{ steps.build_env.outputs.build_name }}
 
   deploy:
     needs: [test, sonar-cloud] 
@@ -133,7 +150,7 @@ jobs:
       - name: Build
         if: success()
         run: |
-          npm run build:dev
+          npm run build:${{ needs.test.outputs.build_env }}
 
       # Setup AWS credentials when push on branches main, staging or develop
       - name: Setup AWS credentials
