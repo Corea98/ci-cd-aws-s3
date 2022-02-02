@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 jobs:
-  test:
+  test-build:
     defaults:
       run:
         working-directory: frontend
@@ -55,6 +55,17 @@ jobs:
           npm run lint
           npm run test:ci
 
+      # Build project only if branch is main, staging or develop
+      - name: Build
+        if: success()
+        run: |
+          npm run build:dev
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: project-build
+          path: ./dist/
+
   sonar-cloud:
     defaults:
       run:
@@ -69,8 +80,7 @@ jobs:
       - name: sonar
         run: echo "sonar"
 
-
-  build-deploy:
+  deploy:
     needs: [test, sonar-cloud]
     defaults:
       run:
@@ -79,30 +89,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Restore or cache node modules
-      - name: Cache node modules
-        id: cache-nodemodules
-        uses: actions/cache@v2
-        env:
-          cache-name: cache-node-modules
+      # Checkout repository
+      - uses: actions/checkout@v2
+
+      - uses: actions/download-artifact@v2
         with:
-          path: frontend/node_modules
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
-
-      # Install dependencies if cache doesn't exist
-      - name: Install dependencies
-        if: success() && steps.cache-nodemodules.outputs.cache-hit != 'true'
-        run: npm ci
-
-      # Build project only if branch is main, staging or develop
-      - name: Build
-        if: success()
-        run: |
-          npm run build:dev
+          name: project-build
 
       # Setup AWS credentials when push on branches main, staging or develop
       - name: Setup AWS credentials
@@ -114,6 +106,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       # Deploy to AWS S3 bucket when push on branches main, staging or develop
-      - name: Deploy
-        if: success()
-        run: aws s3 sync ${{ secrets.FRONTEND_BUILD_PATH }} s3://${{ secrets.AWS_S3_NAME }} --delete
+      # - name: Deploy
+      #   if: success()
+      #   run: aws s3 sync ${{ secrets.FRONTEND_BUILD_PATH }} s3://${{ secrets.AWS_S3_NAME }} --delete
