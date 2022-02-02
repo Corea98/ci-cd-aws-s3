@@ -2,8 +2,8 @@ name: Frontend S3 CI/CD
 
 on:
   push:
-    branches:
-    - feature/test-environments
+    paths:
+      - "frontend/**"
 
 # Required permissions for deploy to AWS S3 bucket
 permissions:
