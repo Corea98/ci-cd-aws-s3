@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 jobs:
-  test-build:
+  test:
     defaults:
       run:
         working-directory: frontend
@@ -69,7 +69,7 @@ jobs:
         run: echo "sonar"
 
   deploy:
-    needs: [test-build, sonar-cloud] 
+    needs: [test, sonar-cloud] 
     defaults:
       run:
         working-directory: frontend
@@ -87,7 +87,7 @@ jobs:
         with:
           node-version: 14
 
-      # Restore or cache node modules
+      # Restore node modules
       - name: Cache node modules
         id: cache-nodemodules
         uses: actions/cache@v2
