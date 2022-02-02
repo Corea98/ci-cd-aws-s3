@@ -95,6 +95,7 @@ jobs:
       - name: Deploy
         if: success() && github.event_name == 'push' && steps.environment.outputs.actual != 'other'
         run: |
+<<<<<<< HEAD
           if [ '${{ steps.environment.outputs.actual }}' == 'prod' ]; then
             aws s3 sync ${{ secrets.FRONTEND_BUILD_PATH }} s3://${{ secrets.AWS_S3_NAME }} --delete
           elif [ '${{ steps.environment.outputs.actual }}' == 'stg' ]; then
@@ -102,6 +103,9 @@ jobs:
           else
             aws s3 sync ${{ secrets.FRONTEND_BUILD_PATH }} s3://${{ secrets.AWS_S3_NAME }} --delete
           fi
+=======
+          aws s3 sync ./dist/ s3://${{ steps.bucket.outputs.actual }} --delete
+>>>>>>> ae556b0c7f03101cb71c3bdf34618be2b873e0b5
       
       # Verify some variables
       - name: Print branch and environment
