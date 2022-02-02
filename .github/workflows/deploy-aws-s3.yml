@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 jobs:
-  deploy-dev:
+  test:
     defaults:
       run:
         working-directory: frontend
@@ -54,6 +54,44 @@ jobs:
         run: |
           npm run lint
           npm run test:ci
+
+  sonar-cloud:
+    defaults:
+      run:
+        working-directory: frontend
+    runs-on: ubuntu-latest
+
+    - name: sonar
+      run: echo sonar
+
+
+  build-deploy:
+    needs: [test, sonar-cloud]
+    defaults:
+      run:
+        working-directory: frontend
+    environment: Develop
+    runs-on: ubuntu-latest
+
+    steps:
+      # Restore or cache node modules
+      - name: Cache node modules
+        id: cache-nodemodules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: frontend/node_modules
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      # Install dependencies if cache doesn't exist
+      - name: Install dependencies
+        if: success() && steps.cache-nodemodules.outputs.cache-hit != 'true'
+        run: npm ci
 
       # Build project only if branch is main, staging or develop
       - name: Build
