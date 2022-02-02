@@ -78,7 +78,7 @@ jobs:
           elif [ "${{ github.ref }}" = "refs/heads/staging" ]; then
             echo "::set-output name=env_name::Staging"
           elif [ "${{ github.ref }}" = "refs/heads/feature/test-environments" ]; then
-            echo "::set-output name=env_name::Develop"
+            echo "::set-output name=env_name::Features"
           else
              echo "::set-output name=env_name::Features"
           fi         
