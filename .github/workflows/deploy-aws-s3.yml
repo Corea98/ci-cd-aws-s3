@@ -61,8 +61,9 @@ jobs:
         working-directory: frontend
     runs-on: ubuntu-latest
 
-    - name: sonar
-      run: echo sonar
+    steps:
+      - name: sonar
+        run: echo sonar
 
 
   build-deploy:
