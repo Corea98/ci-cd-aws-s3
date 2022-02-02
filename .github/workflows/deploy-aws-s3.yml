@@ -48,22 +48,11 @@ jobs:
         run: npm ci
 
       # Run lint and angular tests
-      # - name: Test
-      #   if: success()
-      #   run: |
-      #     npm run lint
-      #     npm run test:ci
-
-      # Build project only if branch is main, staging or develop
-      - name: Build
+      - name: Test
         if: success()
         run: |
-          npm run build:dev
-
-      - uses: actions/upload-artifact@v2
-        with:
-          name: project-build
-          path: frontend/dist/
+          npm run lint
+          npm run test:ci
 
   sonar-cloud:
     defaults:
@@ -91,10 +80,32 @@ jobs:
       # Checkout repository
       - uses: actions/checkout@v2
 
-      - uses: actions/download-artifact@v2
+      # Set node v14
+      - name: Setup node
+        if: success()
+        uses: actions/setup-node@v1
         with:
-          name: project-build
-          path: frontend/dist/
+          node-version: 14
+
+      # Restore or cache node modules
+      - name: Cache node modules
+        id: cache-nodemodules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: frontend/node_modules
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+            
+      # Build project only if branch is main, staging or develop
+      - name: Build
+        if: success()
+        run: |
+          npm run build:dev
 
       # Setup AWS credentials when push on branches main, staging or develop
       - name: Setup AWS credentials
@@ -104,9 +115,6 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID  }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-      - name: test
-        run: dir
 
       # Deploy to AWS S3 bucket when push on branches main, staging or develop
       - name: Deploy
