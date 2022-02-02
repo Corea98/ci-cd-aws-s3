@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 jobs:
-  job:
+  deploy-dev:
     defaults:
       run:
         working-directory: frontend
@@ -53,8 +53,8 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-region: ${{ secrets.AWS_REGION }}
-          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
-          role-session-name: my-github-role
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID  }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       # Deploy to AWS S3 bucket when push on branches main, staging or develop
       - name: Deploy
