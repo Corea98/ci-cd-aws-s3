@@ -15,7 +15,6 @@ jobs:
     defaults:
       run:
         working-directory: frontend
-    environment: Develop
     runs-on: ubuntu-latest
 
     steps:
@@ -49,11 +48,11 @@ jobs:
         run: npm ci
 
       # Run lint and angular tests
-      - name: Test
-        if: success()
-        run: |
-          npm run lint
-          npm run test:ci
+      # - name: Test
+      #   if: success()
+      #   run: |
+      #     npm run lint
+      #     npm run test:ci
 
       # Build project only if branch is main, staging or develop
       - name: Build
@@ -104,6 +103,9 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID  }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: test
+        run: dir
 
       # Deploy to AWS S3 bucket when push on branches main, staging or develop
       - name: Deploy
